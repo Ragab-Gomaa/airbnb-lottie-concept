@@ -1,0 +1,338 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Airbnb Lottie Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+/* layout: a live grid of six interaction cards, a code dock that follows the card you last touched */
+:root {
+  --ground: #F6F3F0; --card: #FFFFFF; --ink: #222222; --muted: #6A6662; --hair: #E8E2DC; --chip: #F3EEEA;
+  --rausch: #FF385C; --rausch-ink: #E0184A; --code-bg: #1E1A1D; --code-ink: #F3EEEA; --code-dim: #A59C98;
+  --stage-et: #FBF5EE; --stage-ptr: #F1F8FB; --stage-sl: #FFF4F2; --stage-bc: #FFF6F7; --stage-tb: #F4F1EE;
+  --display: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --shadow: 0 1px 0 rgba(34, 22, 26, .04), 0 18px 40px -26px rgba(34, 22, 26, .35);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #161315; --card: #201C1F; --ink: #F4EFEC; --muted: #A9A19C; --hair: #322C30; --chip: #2B2529;
+  --rausch: #FF4D6D; --rausch-ink: #FF7A93; --code-bg: #0F0D0E; --code-ink: #F3EEEA; --code-dim: #8E8580;
+  --stage-et: #2A2420; --stage-ptr: #1D262B; --stage-sl: #2B2224; --stage-bc: #2C2124; --stage-tb: #262124;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 18px 40px -26px rgba(0, 0, 0, .8); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #161315; --card: #201C1F; --ink: #F4EFEC; --muted: #A9A19C; --hair: #322C30; --chip: #2B2529;
+  --rausch: #FF4D6D; --rausch-ink: #FF7A93; --code-bg: #0F0D0E; --code-ink: #F3EEEA; --code-dim: #8E8580;
+  --stage-et: #2A2420; --stage-ptr: #1D262B; --stage-sl: #2B2224; --stage-bc: #2C2124; --stage-tb: #262124;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 18px 40px -26px rgba(0, 0, 0, .8); color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--ground); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5;
+  padding-inline: clamp(16px, 4vw, 48px); padding-block: 28px 48px; -webkit-font-smoothing: antialiased }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 28px }
+header { display: grid; gap: 10px }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.04; letter-spacing: -.035em; margin: 0; text-wrap: balance }
+h1 em { font-style: normal; color: var(--rausch) }
+.lede { max-width: 64ch; color: var(--muted); font-size: 16px; margin: 0; text-wrap: pretty }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px 18px; font-family: var(--mono); font-size: 12.5px; color: var(--muted) }
+.meta-row b { color: var(--ink); font-weight: 500 }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 24px; align-items: start }
+@media (max-width: 1020px) { .layout { grid-template-columns: minmax(0, 1fr) } }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 18px }
+.card { background: var(--card); border-radius: 22px; box-shadow: var(--shadow); padding: 14px; display: grid; gap: 12px; min-width: 0;
+  outline: 2px solid transparent; outline-offset: 0; transition: outline-color .2s }
+.card.active { outline-color: var(--rausch) }
+.stage { position: relative; border-radius: 14px; overflow: hidden; height: 260px; display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none }
+.stage .anim { width: 220px; height: 220px }
+.stage .anim.small { width: 140px; height: 140px }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-inline: 4px }
+.card-head h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.01em }
+.size { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap }
+.idea { margin: 0; padding-inline: 4px; color: var(--muted); font-size: 14px; text-wrap: pretty; min-height: 2.9em }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-inline: 4px }
+.btn { font: 500 12.5px/1 var(--mono); padding: 8px 11px; border-radius: 999px; border: 1.5px solid var(--hair); background: var(--card); color: var(--ink); cursor: pointer }
+.btn:hover { border-color: var(--muted) }
+.btn:focus-visible, .tab:focus-visible, .ptab:focus-visible, .copy:focus-visible { outline: 2px solid var(--rausch); outline-offset: 2px }
+.btn.on { background: var(--rausch); border-color: var(--rausch); color: #fff }
+.btn .r { color: var(--muted); margin-left: 4px }
+.btn.on .r { color: rgba(255, 255, 255, .8) }
+.hint { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); font: 500 12px var(--mono); color: var(--muted); background: var(--card);
+  padding: 5px 10px; border-radius: 999px; box-shadow: var(--shadow); white-space: nowrap; pointer-events: none }
+/* heart on a listing photo */
+.photo { position: absolute; inset: 0; width: 100%; height: 100% }
+.stage.heart-stage { cursor: pointer }
+.heart-stage .anim { position: relative; width: 190px; height: 190px }
+/* pull to refresh: a list you can drag */
+.ptr-stage { place-items: stretch; background: var(--stage-ptr) }
+.ptr-globe { position: absolute; left: 50%; top: 4px; width: 120px; height: 120px; transform: translateX(-50%) }
+.ptr-list { position: absolute; inset: 0 0 auto 0; min-height: 100%; padding: 12px; align-content: start; display: grid; gap: 10px; background: var(--stage-ptr);
+  box-shadow: 0 -12px 18px -14px rgba(0, 0, 0, .45); cursor: grab; will-change: transform }
+.ptr-list:active { cursor: grabbing }
+#ptr-hint { transition: opacity .2s }
+.row { background: var(--card); border-radius: 12px; padding: 8px; display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: center; box-shadow: var(--shadow) }
+.row i { display: block; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #3B4A63, #8B6A7A 60%, #E6A06E) }
+.row span { display: grid; gap: 5px }
+.row span b { display: block; height: 8px; border-radius: 4px; background: var(--chip) }
+.row span b:first-child { width: 70%; background: var(--hair) }
+.row span b:last-child { width: 40% }
+/* tab bar */
+.tb-stage { background: var(--stage-tb) }
+.tabbar { display: flex; gap: 2px; background: var(--card); border-radius: 20px; padding: 10px 8px; box-shadow: var(--shadow) }
+.tab { display: grid; justify-items: center; gap: 2px; width: 62px; padding: 4px 0; border: 0; background: none; color: var(--muted); cursor: pointer; font: 600 11.5px var(--body) }
+.tab .t { width: 44px; height: 44px }
+.tab[aria-selected="true"] { color: var(--rausch-ink) }
+/* code dock */
+.dock { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--card); border-radius: 22px; box-shadow: var(--shadow); padding: 16px; display: grid; gap: 12px; min-width: 0 }
+.dock h3 { margin: 0; font-size: 13px; font-weight: 600; font-family: var(--mono); color: var(--ink) }
+.ptabs { display: flex; flex-wrap: wrap; gap: 2px }
+.ptab { font: 500 12px var(--body); padding: 6px 8px; border-radius: 8px; border: 0; background: none; color: var(--muted); cursor: pointer }
+.ptab[aria-selected="true"] { background: var(--ink); color: var(--card) }
+.code { background: var(--code-bg); color: var(--code-ink); border-radius: 12px; padding: 10px 12px 12px; min-width: 0 }
+.code .bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font: 500 11.5px var(--mono); color: var(--code-dim) }
+.code pre { margin: 0; font: 12px/1.6 var(--mono); white-space: pre; overflow-x: auto }
+.code .c { color: var(--code-dim) }
+.copy { flex: none; font: 500 11px var(--mono); padding: 5px 9px; border-radius: 7px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(255, 255, 255, .06); color: var(--code-ink); cursor: pointer }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; margin: 0 }
+.facts dt { color: var(--muted) }
+.facts dd { margin: 0; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums }
+.chips { display: flex; flex-wrap: wrap; gap: 5px }
+.chip { font: 500 11.5px var(--mono); padding: 3px 8px; border-radius: 999px; background: var(--chip); color: var(--ink) }
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--hair); padding-top: 16px }
+footer b { color: var(--ink); font-weight: 600 }
+@media (prefers-reduced-motion: reduce) { .card { transition: none } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Unofficial concept · Lottie pack · 10 files</div>
+    <h1>Small moments in the Airbnb app, <em>built for Lottie.</em></h1>
+    <p class="lede">Six interactions you can play with: drag the list, tap the heart, switch tabs. Each one is a real Lottie file with named markers, the same files a developer would ship.</p>
+    <div class="meta-row"><span><b>60</b> fps</span><span><b>vector</b> only · no images · no expressions</span><span>JSON <b id="tot-json"></b> · .lottie <b id="tot-lottie"></b></span></div>
+  </header>
+
+  <div class="layout">
+    <main class="grid" id="grid"></main>
+    <aside class="dock" aria-label="Code for the selected animation">
+      <h3 id="dock-file">heart.json</h3>
+      <div class="chips" id="dock-chips"></div>
+      <div class="ptabs" role="tablist" id="ptabs"></div>
+      <div class="code"><div class="bar"><span id="code-lib"></span><button class="copy" id="copy" type="button">Copy</button></div><pre id="code"></pre></div>
+      <dl class="facts" id="facts"></dl>
+    </aside>
+  </div>
+
+  <footer>
+    <span><b>Motion by Ragab Gomaa</b> · Unofficial concept, not affiliated with Airbnb.</span>
+    <span>Tested in lottie-web 5.12.2 and dotlottie-web 0.80 (ThorVG).</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<script>
+const META = {"empty-trips": {"w": 240, "h": 240, "fr": 252, "markers": [["intro", 0, 72], ["loop", 72, 252]], "json": 60.3, "lottie": 8.1}, "pull-to-refresh": {"w": 120, "h": 120, "fr": 128, "markers": [["pull", 0, 30], ["release", 30, 50], ["refresh", 50, 110], ["end", 110, 128]], "json": 37.0, "lottie": 5.4}, "heart": {"w": 96, "h": 96, "fr": 84, "markers": [["save", 0, 54], ["unsave", 54, 84]], "json": 21.7, "lottie": 4.2}, "search-loader": {"w": 120, "h": 120, "fr": 144, "markers": [["loop", 0, 144]], "json": 63.0, "lottie": 6.9}, "booking-confirmed": {"w": 240, "h": 240, "fr": 150, "markers": [["play", 0, 150]], "json": 62.8, "lottie": 7.7}, "tab-explore": {"w": 32, "h": 32, "fr": 42, "markers": [["select", 0, 30], ["deselect", 30, 42]], "json": 6.5, "lottie": 1.9}, "tab-wishlists": {"w": 32, "h": 32, "fr": 42, "markers": [["select", 0, 30], ["deselect", 30, 42]], "json": 3.4, "lottie": 1.6}, "tab-trips": {"w": 32, "h": 32, "fr": 42, "markers": [["select", 0, 30], ["deselect", 30, 42]], "json": 5.3, "lottie": 1.7}, "tab-inbox": {"w": 32, "h": 32, "fr": 42, "markers": [["select", 0, 30], ["deselect", 30, 42]], "json": 4.3, "lottie": 1.5}, "tab-profile": {"w": 32, "h": 32, "fr": 42, "markers": [["select", 0, 30], ["deselect", 30, 42]], "json": 4.9, "lottie": 1.7}};
+const PHOTO = "<svg class=\"photo\" viewBox=\"0 0 400 300\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\"><linearGradient id=\"sk_demo\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#2E3F5E\"/><stop offset=\".55\" stop-color=\"#7A6479\"/><stop offset=\"1\" stop-color=\"#E6A06E\"/></linearGradient><rect width=\"400\" height=\"300\" fill=\"url(#sk_demo)\"/><path d=\"M0 205 C80 180 150 190 220 175 C290 160 340 178 400 168 L400 300 L0 300 Z\" fill=\"#3A4752\" opacity=\".8\"/><path d=\"M-60.540000000000006 250.0 L18 156.5 L96.54 250.0 Z\" fill=\"#18221E\"/><path d=\"M-43.26120000000001 190.16 L18 96.65999999999998 L79.2612 190.16 Z\" fill=\"#18221E\"/><path d=\"M-25.982400000000005 130.32 L18 36.81999999999998 L61.982400000000005 130.32 Z\" fill=\"#18221E\"/><path d=\"M2.8800000000000026 250.0 L60 182.0 L117.12 250.0 Z\" fill=\"#18221E\"/><path d=\"M15.446399999999997 206.48 L60 138.48 L104.5536 206.48 Z\" fill=\"#18221E\"/><path d=\"M28.0128 162.95999999999998 L60 94.95999999999998 L91.9872 162.95999999999998 Z\" fill=\"#18221E\"/><path d=\"M273.6 250.0 L345 165.0 L416.4 250.0 Z\" fill=\"#18221E\"/><path d=\"M289.308 195.6 L345 110.6 L400.692 195.6 Z\" fill=\"#18221E\"/><path d=\"M305.016 141.2 L345 56.19999999999999 L384.984 141.2 Z\" fill=\"#18221E\"/><path d=\"M295.75 250.0 L385 143.75 L474.25 250.0 Z\" fill=\"#18221E\"/><path d=\"M315.385 182.0 L385 75.75 L454.615 182.0 Z\" fill=\"#18221E\"/><path d=\"M335.02 114.0 L385 7.75 L434.98 114.0 Z\" fill=\"#18221E\"/><path d=\"M260.02 250.0 L310 190.5 L359.98 250.0 Z\" fill=\"#18221E\"/><path d=\"M271.0156 211.92000000000002 L310 152.42000000000002 L348.9844 211.92000000000002 Z\" fill=\"#18221E\"/><path d=\"M282.01120000000003 173.84 L310 114.34 L337.98879999999997 173.84 Z\" fill=\"#18221E\"/><path d=\"M0 248 C120 236 280 240 400 246 L400 300 L0 300 Z\" fill=\"#1E2A22\"/><radialGradient id=\"gl_demo\" cx=\".5\" cy=\".5\" r=\".5\"><stop offset=\"0\" stop-color=\"#FFC27A\" stop-opacity=\".55\"/><stop offset=\"1\" stop-color=\"#FFC27A\" stop-opacity=\"0\"/></radialGradient><ellipse cx=\"200\" cy=\"215\" rx=\"150\" ry=\"70\" fill=\"url(#gl_demo)\"/><path d=\"M120 238 L200 68 L280 238 Z\" fill=\"#161616\"/><path d=\"M148 232 L200 116 L252 232 Z\" fill=\"#FFC77E\"/><path d=\"M200 116 L200 232 M163 199 L237 199 M175 170 L225 170\" stroke=\"#2A2118\" stroke-width=\"3.5\"/><rect x=\"104\" y=\"236\" width=\"192\" height=\"9\" fill=\"#2B2018\"/></svg>";
+const CARDS = [
+  { id: 'empty-trips', title: 'Empty Trips', stage: 'et', idea: 'An old suitcase shakes off its dust, then waits, a little impatient to travel.' },
+  { id: 'pull-to-refresh', title: 'Pull to Refresh', stage: 'ptr', idea: 'Pull the list to wind up the snow globe. Let go and the snow swirls until the data lands.' },
+  { id: 'heart', title: 'Wishlist Heart', stage: 'heart', idea: 'Tap to save: the heart fills like jelly. Tap again and it lets the air out.' },
+  { id: 'search-loader', title: 'Search Loader', stage: 'sl', idea: 'A split-flap tile flips through kinds of stays while results load.' },
+  { id: 'booking-confirmed', title: 'Booking Confirmed', stage: 'bc', idea: 'A brass key turns, then becomes the check mark.' },
+  { id: 'tabs', title: 'Tab Bar Icons', stage: 'tb', idea: 'Outline at rest, filled when selected, each icon with its own small gesture.' },
+];
+const TABS = ['explore', 'wishlists', 'trips', 'inbox', 'profile'];
+const A = {};
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = (n) => n.toFixed(1) + ' KB';
+const sum = (k, ids) => ids.reduce((s, i) => s + META[i][k], 0);
+document.getElementById('tot-json').textContent = fmt(sum('json', Object.keys(META)));
+document.getElementById('tot-lottie').textContent = fmt(sum('lottie', Object.keys(META)));
+
+function load(el, name) {
+  return lottie.loadAnimation({ container: el, renderer: 'svg', loop: false, autoplay: false, path: 'lottie/' + name + '.json',
+    rendererSettings: { preserveAspectRatio: 'xMidYMid meet' } });
+}
+function seg(a, from, to, loop) { a.loop = !!loop; a.playSegments([from, to], true); }
+function markerBtns(id, onClick) {
+  const m = META[id].markers;
+  return m.map(([n, a, b]) => `<button class="btn" type="button" data-m="${n}" data-a="${a}" data-b="${b}">${n}<span class="r">${a}–${b}</span></button>`).join('');
+}
+
+// ---------------------------------------------------------------- cards
+const grid = document.getElementById('grid');
+for (const c of CARDS) {
+  const card = document.createElement('section');
+  card.className = 'card'; card.dataset.id = c.id;
+  const size = c.id === 'tabs' ? fmt(sum('json', TABS.map(t => 'tab-' + t))) + ' · 5 files' : fmt(META[c.id].json);
+  let stage = '';
+  if (c.stage === 'heart') stage = `<div class="stage heart-stage" role="button" tabindex="0" aria-label="Save to wishlist">${PHOTO}<div class="anim" id="a-heart"></div><span class="hint">tap the heart</span></div>`;
+  else if (c.stage === 'ptr') stage = `<div class="stage ptr-stage"><div class="ptr-globe" id="a-ptr"></div><div class="ptr-list" id="ptr-list">${'<div class="row"><i></i><span><b></b><b></b><b></b></span></div>'.repeat(3)}</div><span class="hint" id="ptr-hint">drag the list down</span></div>`;
+  else if (c.stage === 'tb') stage = `<div class="stage tb-stage"><div class="tabbar" role="tablist">${TABS.map((t, i) => `<button class="tab" type="button" role="tab" aria-selected="${i === 0}" data-t="${t}"><span class="t" id="a-tab-${t}"></span>${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div></div>`;
+  else stage = `<div class="stage" style="background:var(--stage-${c.stage})"><div class="anim" id="a-${c.id}"></div></div>`;
+  const controls = c.id === 'tabs' ? `<span class="chip">select 0–30</span><span class="chip">deselect 30–42</span>`
+    : c.id === 'pull-to-refresh' ? `<button class="btn" type="button" id="ptr-demo">Play the gesture</button>` + META[c.id].markers.map(([n, a, b]) => `<span class="chip">${n} ${a}–${b}</span>`).join('')
+    : c.id === 'search-loader' ? `<button class="btn on" type="button" id="sl-play">Play</button><button class="btn" type="button" id="sl-stop">Stop at loop end</button>`
+    : c.id === 'booking-confirmed' ? `<button class="btn" type="button" id="bc-replay">Replay</button>`
+    : markerBtns(c.id);
+  card.innerHTML = `${stage}<div class="card-head"><h2>${c.title}</h2><span class="size">${size}</span></div><p class="idea">${c.idea}</p><div class="controls">${controls}</div>`;
+  grid.appendChild(card);
+  card.addEventListener('pointerdown', () => setActive(c.id), { capture: true });
+  card.addEventListener('focusin', () => setActive(c.id));
+}
+
+// Empty Trips: intro once, then the loop
+A.et = load(document.getElementById('a-empty-trips'), 'empty-trips');
+let etPhase = 'intro';
+A.et.addEventListener('DOMLoaded', () => { if (reduce) A.et.goToAndStop(72, true); else { seg(A.et, 0, 72, false); } });
+A.et.addEventListener('complete', () => { if (etPhase === 'intro') { etPhase = 'loop'; seg(A.et, 72, 252, true); } });
+document.querySelectorAll('[data-id="empty-trips"] .btn').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.m === 'intro') { etPhase = 'intro'; seg(A.et, 0, 72, false); } else { etPhase = 'loop'; seg(A.et, 72, 252, true); }
+}));
+
+// Wishlist heart: tap to toggle
+A.heart = load(document.getElementById('a-heart'), 'heart');
+let saved = false;
+function heartTo(s) { saved = s; seg(A.heart, s ? 0 : 54, s ? 54 : 84, false); }
+const hs = document.querySelector('.heart-stage');
+hs.addEventListener('click', () => heartTo(!saved));
+hs.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); heartTo(!saved); } });
+document.querySelectorAll('[data-id="heart"] .btn').forEach(b => b.addEventListener('click', () => heartTo(b.dataset.m === 'save')));
+
+// Search loader: loop, stop cleanly at the end of a turn
+A.sl = load(document.getElementById('a-search-loader'), 'search-loader');
+A.sl.addEventListener('DOMLoaded', () => { if (reduce) A.sl.goToAndStop(29, true); else seg(A.sl, 0, 144, true); });
+document.getElementById('sl-play').addEventListener('click', (e) => { seg(A.sl, 0, 144, true); e.target.classList.add('on'); document.getElementById('sl-stop').classList.remove('on'); });
+document.getElementById('sl-stop').addEventListener('click', (e) => { A.sl.loop = false; e.target.classList.add('on'); document.getElementById('sl-play').classList.remove('on'); });
+
+// Booking confirmed: rests on its last frame, plays when it comes into view and on replay
+A.bc = load(document.getElementById('a-booking-confirmed'), 'booking-confirmed');
+A.bc.addEventListener('DOMLoaded', () => A.bc.goToAndStop(149, true));
+document.getElementById('bc-replay').addEventListener('click', () => seg(A.bc, 0, 150, false));
+if ('IntersectionObserver' in window && !reduce) {
+  const io = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) { seg(A.bc, 0, 150, false); io.disconnect(); } }); }, { threshold: .6 });
+  io.observe(document.getElementById('a-booking-confirmed'));
+}
+
+// Tab bar: select on the new tab, deselect on the old one
+TABS.forEach(t => { A['tab-' + t] = load(document.getElementById('a-tab-' + t), 'tab-' + t); });
+let curTab = 'explore';
+A['tab-explore'].addEventListener('DOMLoaded', () => A['tab-explore'].goToAndStop(30, true));
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+  const t = b.dataset.t; if (t === curTab) { seg(A['tab-' + t], 0, 30, false); return; }
+  seg(A['tab-' + curTab], 30, 42, false); seg(A['tab-' + t], 0, 30, false);
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x.dataset.t === t))); curTab = t;
+}));
+
+// Pull to refresh: drag the list, the globe follows the pull, release shakes it
+A.ptr = load(document.getElementById('a-ptr'), 'pull-to-refresh');
+const list = document.getElementById('ptr-list'), hint = document.getElementById('ptr-hint');
+const FULL = 104;           // px of pull for a complete wind-up (frame 30)
+let pull = 0, dragging = false, startY = 0, busy = false;
+function setPull(px) { pull = Math.max(0, px); list.style.transform = `translateY(${pull}px)`; hint.style.opacity = pull > 2 || busy ? '0' : ''; if (!busy) A.ptr.goToAndStop(Math.min(1, pull / FULL) * 30, true); }
+function settle(to, ms, done) {
+  const from = pull, t0 = performance.now();
+  (function step(now) { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3); pull = from + (to - from) * e;
+    list.style.transform = `translateY(${pull}px)`; if (k < 1) requestAnimationFrame(step); else if (done) done(); })(t0);
+}
+function release() {
+  if (pull >= FULL) {
+    busy = true; hint.style.opacity = '0'; settle(FULL, 180);
+    seg(A.ptr, 30, 50, false);
+    const onRel = () => { A.ptr.removeEventListener('complete', onRel); seg(A.ptr, 50, 110, true);
+      setTimeout(() => { const onLoop = () => { A.ptr.removeEventListener('loopComplete', onLoop); seg(A.ptr, 110, 128, false);
+        const onEnd = () => { A.ptr.removeEventListener('complete', onEnd); settle(0, 320, () => { busy = false; A.ptr.resetSegments(true); A.ptr.goToAndStop(0, true); hint.style.opacity = ''; }); };
+        A.ptr.addEventListener('complete', onEnd); }; A.ptr.addEventListener('loopComplete', onLoop); }, 1500); };
+    A.ptr.addEventListener('complete', onRel);
+  } else { settle(0, 240, () => { A.ptr.goToAndStop(0, true); hint.style.opacity = ''; }); }
+}
+list.addEventListener('pointerdown', (e) => { if (busy) return; dragging = true; startY = e.clientY; list.setPointerCapture(e.pointerId); });
+list.addEventListener('pointermove', (e) => { if (!dragging) return; const dy = e.clientY - startY; setPull(dy > 0 ? dy * 0.62 : 0); });
+const up = () => { if (!dragging) return; dragging = false; release(); };
+list.addEventListener('pointerup', up); list.addEventListener('pointercancel', up);
+document.getElementById('ptr-demo').addEventListener('click', () => {
+  if (busy) return; const t0 = performance.now();
+  (function step(now) { const k = Math.min(1, (now - t0) / 700); setPull(FULL * (1 - Math.pow(1 - k, 2)) * 1.04); if (k < 1) requestAnimationFrame(step); else release(); })(t0);
+});
+
+// ---------------------------------------------------------------- code dock
+const PLAT = ['Web', 'iOS', 'Android', 'React Native', 'dotLottie'];
+let curPlat = 'Web', curId = 'heart';
+const ptabs = document.getElementById('ptabs');
+ptabs.innerHTML = PLAT.map(p => `<button class="ptab" role="tab" type="button" aria-selected="${p === curPlat}" data-p="${p}">${p}</button>`).join('');
+ptabs.addEventListener('click', (e) => { const b = e.target.closest('.ptab'); if (!b) return; curPlat = b.dataset.p;
+  ptabs.querySelectorAll('.ptab').forEach(x => x.setAttribute('aria-selected', String(x === b))); renderDock(); });
+const C = (t) => `<span class="c">${t}</span>`;
+const LOOPS = { loop: true, refresh: true };
+const SM = {
+  'heart': ['heart_toggle', [C("// a tap on the canvas toggles 'saved'")]],
+  'empty-trips': ['intro_then_loop', [C('// plays the intro, then loops by itself')]],
+  'pull-to-refresh': ['refresh_cycle', [C('// drag: player.setFrame(30 * progress)'), C('// finger up:'), "player.stateMachineFireEvent('released');",
+    C('// data loaded:'), 'player.stateMachineSetBooleanInput(', "  'loaded', true);", C("// next pull: 'loaded' false, fire 'reset'")]],
+  'tab': ['tab_select', [C('// a tap selects; on the old tab:'), 'player.stateMachineSetBooleanInput(', "  'selected', false);"]],
+};
+const smFor = (id) => SM[id] || (id.startsWith('tab-') ? SM.tab : null);
+function snippet(id, plat) {
+  const m = META[id].markers, f = id + '.json', L = [];
+  let looping = false;
+  const loopSwitch = (n, on, off) => { if (LOOPS[n] && !looping) { L.push(on); looping = true; } else if (!LOOPS[n] && looping) { L.push(off); looping = false; } };
+  if (plat === 'Web') {
+    L.push('const anim = lottie.loadAnimation({', "  container, renderer: 'svg',", '  loop: false, autoplay: false,', `  path: '${f}'`, '});', '', C('// one call per state, by marker name'));
+    for (const [n] of m) {
+      if (n === 'pull') { L.push(C('// pull: follow the finger (0 → 30)'), 'anim.resetSegments(true);', 'anim.goToAndStop(30 * progress, true);', C('// then')); continue; }
+      loopSwitch(n, 'anim.setLoop(true);', 'anim.setLoop(false);');
+      L.push(`anim.goToAndPlay('${n}', true);`);
+    }
+  } else if (plat === 'iOS') {
+    const head = `let view = LottieAnimationView(name: "${id}")`;
+    L.push(...(head.length > 46 ? ['let view = LottieAnimationView(', `  name: "${id}")`] : [head]), '', C('// one call per state (frames @ 60 fps)'));
+    for (const [n, a, b] of m) {
+      if (n === 'pull') { L.push(C('// pull: follow the finger (0 → 30)'), 'view.currentFrame = 30 * progress'); continue; }
+      loopSwitch(n, 'view.loopMode = .loop', 'view.loopMode = .playOnce');
+      L.push(`view.play(fromFrame: ${a}, toFrame: ${b}) ` + C('// ' + n));
+    }
+  } else if (plat === 'Android') {
+    L.push(`view.setAnimation("${f}")`, '', C('// one call per state, by marker name'));
+    for (const [n] of m) {
+      loopSwitch(n, 'view.repeatCount = LottieDrawable.INFINITE', 'view.repeatCount = 0');
+      L.push(`view.setMinAndMaxFrame("${n}")`);
+      L.push(n === 'pull' ? 'view.frame = (30 * progress).toInt() ' + C('// drag') : 'view.playAnimation()');
+    }
+  } else if (plat === 'React Native') {
+    L.push('&lt;LottieView ref={ref}', `  source={require('./${f}')}`, '  autoPlay={false} loop={false} /&gt;', '', C('// one call per state (frames @ 60 fps)'));
+    for (const [n, a, b] of m) {
+      if (n === 'pull') { L.push(C('// pull: scrub 0–30 with the progress prop')); continue; }
+      if (LOOPS[n]) L.push(C(`// '${n}' loops: set loop={true}`));
+      L.push(`ref.current?.play(${a}, ${b}) ` + C('// ' + n));
+    }
+  } else {
+    const sm = smFor(id);
+    L.push('const player = new DotLottie({', `  canvas, src: '${id}.lottie'` + (sm ? '' : ','));
+    if (!sm) {
+      const loop = id === 'search-loader';
+      L.push(`  autoplay: true, loop: ${loop}`, '});', loop ? C('// stop at the end of a turn:') : C('// holds the last frame when done'));
+      if (loop) L.push('player.setLoop(false);');
+    } else {
+      L.push('});', "player.addEventListener('load', () => {", `  player.stateMachineLoad('${sm[0]}');`, '  player.stateMachineStart();', '});', ...sm[1]);
+    }
+  }
+  return L.join('\n');
+}
+const LIB = { 'Web': 'lottie-web 5.12', 'iOS': 'lottie-ios 4.x', 'Android': 'lottie-android · Kotlin', 'React Native': 'lottie-react-native', 'dotLottie': 'dotlottie-web' };
+function setActive(id) { curId = id === 'tabs' ? 'tab-trips' : id; document.querySelectorAll('.card').forEach(c => c.classList.toggle('active', c.dataset.id === id)); renderDock(); }
+function renderDock() {
+  const id = curId, m = META[id];
+  document.getElementById('dock-file').textContent = id + '.json';
+  document.getElementById('dock-chips').innerHTML = m.markers.map(([n, a, b]) => `<span class="chip">${n} ${a}–${b}</span>`).join('');
+  document.getElementById('code').innerHTML = snippet(id, curPlat);
+  document.getElementById('code-lib').textContent = LIB[curPlat] + (curPlat === 'dotLottie' && smFor(id) ? ' · state machine' : '');
+  document.getElementById('facts').innerHTML = `<dt>Canvas</dt><dd>${m.w} × ${m.h}</dd><dt>Length</dt><dd>${m.fr} frames · ${(m.fr / 60).toFixed(2)} s</dd>`
+    + `<dt>JSON</dt><dd>${fmt(m.json)}</dd><dt>.lottie</dt><dd>${fmt(m.lottie)}</dd>`;
+}
+document.getElementById('copy').addEventListener('click', (e) => {
+  const txt = document.getElementById('code').textContent, b = e.currentTarget;
+  const done = (ok) => { b.textContent = ok ? 'Copied' : 'Select and copy'; setTimeout(() => b.textContent = 'Copy', 1400); };
+  try { navigator.clipboard.writeText(txt).then(() => done(true), () => { selectCode(); done(false); }); } catch (_) { selectCode(); done(false); }
+});
+function selectCode() { const r = document.createRange(); r.selectNodeContents(document.getElementById('code')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+setActive('heart');
+</script>
